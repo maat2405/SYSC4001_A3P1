@@ -7,15 +7,10 @@
 
 #include "interrupts_101306866_101302780.hpp"
 
-void FCFS(std::vector<PCB> &ready_queue) {
-    std::sort( 
-                ready_queue.begin(),
-                ready_queue.end(),
-                []( const PCB &first, const PCB &second ){
-                    return (first.arrival_time > second.arrival_time); 
-                } 
-            );
+void RoundRobin(std::vector<PCB> &ready_queue) {
+    // do nothing since RR uses queue order
 }
+
 
 std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std::vector<PCB> list_processes) {
 
@@ -67,7 +62,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
         /////////////////////////////////////////////////////////////////
 
         //////////////////////////SCHEDULER//////////////////////////////
-        FCFS(ready_queue); //example of FCFS is shown here
+        RoundRobin(ready_queue); //example of FCFS is shown here
         /////////////////////////////////////////////////////////////////
 
     }

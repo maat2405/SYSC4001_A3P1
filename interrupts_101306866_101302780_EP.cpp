@@ -7,15 +7,17 @@
 
 #include "interrupts_101306866_101302780.hpp"
 
-void FCFS(std::vector<PCB> &ready_queue) {
+void ExternalPriority(std::vector<PCB> &ready_queue) {
     std::sort( 
-                ready_queue.begin(),
-                ready_queue.end(),
-                []( const PCB &first, const PCB &second ){
-                    return (first.arrival_time > second.arrival_time); 
-                } 
-            );
+        ready_queue.begin(),
+        ready_queue.end(),
+        []( const PCB &first, const PCB &second ){
+            return (first.arrival_time > second.arrival_time); 
+        } 
+    );
 }
+
+
 
 std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std::vector<PCB> list_processes) {
 
@@ -67,7 +69,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
         /////////////////////////////////////////////////////////////////
 
         //////////////////////////SCHEDULER//////////////////////////////
-        FCFS(ready_queue); //example of FCFS is shown here
+        ExternalPriority(ready_queue); 
         /////////////////////////////////////////////////////////////////
 
     }
