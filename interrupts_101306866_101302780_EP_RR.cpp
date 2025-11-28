@@ -12,10 +12,11 @@ void ExternalPriorityRR(std::vector<PCB> &ready_queue) {
         ready_queue.begin(),
         ready_queue.end(),
         [](const PCB &a, const PCB &b){
-            return a.processing_time < b.processing_time; 
+            return a.priority < b.priority;
         }
     );
 }
+
 
 
 std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std::vector<PCB> list_processes) {

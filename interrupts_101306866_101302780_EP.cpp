@@ -8,15 +8,14 @@
 #include "interrupts_101306866_101302780.hpp"
 
 void ExternalPriority(std::vector<PCB> &ready_queue) {
-    std::sort( 
+    std::sort(
         ready_queue.begin(),
         ready_queue.end(),
-        []( const PCB &first, const PCB &second ){
-            return (first.arrival_time > second.arrival_time); 
-        } 
+        [](const PCB &a, const PCB &b){
+            return a.priority < b.priority; // lower number = higher priority
+        }
     );
 }
-
 
 
 std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std::vector<PCB> list_processes) {
