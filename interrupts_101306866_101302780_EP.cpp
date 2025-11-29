@@ -28,6 +28,8 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
                                     //to make the code easier :).
 
     unsigned int current_time = 0;
+    const int context_time = 10; // context switch time
+    const int isr_time = 100; // ISR time
     PCB running;
 
     //Initialize an empty running process
