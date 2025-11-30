@@ -12,7 +12,7 @@ void ExternalPriority(std::vector<PCB> &ready_queue) {
         ready_queue.begin(),
         ready_queue.end(),
         [](const PCB &a, const PCB &b){
-            return a.priority < b.priority; // lower number = higher priority
+            return a.PID < b.PID; // lower number = higher priority
         }
     );
 }
@@ -29,7 +29,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
 
     unsigned int current_time = 0;
     const int context_time = 10; // context switch time
-    const int isr_time = 100; // ISR time
+    const int isr_time = 50; // ISR time
     PCB running;
 
     //Initialize an empty running process
@@ -62,10 +62,27 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
 
                 execution_status += print_exec_status(current_time, process.PID, NEW, READY);
             }
+
+            if(process.state == READY) {
+                current_time += context_time; //Add context switch time
+                execution_status += print_exec_status(current_time, process.PID, READY, RUNNING);
+                sync_queue(job_list, process);
+            }
+
+            if(process.state == RUNNING) {
+                current_time += process.processing_time; //Add CPU processing time
+                //TODO: CHECK FOR I/O TIMe
+                process.remaining_time = 0;
+                process.state = TERMINATED;
+                free_memory(process);
+                execution_status += print_exec_status(current_time, process.PID, RUNNING, TERMINATED);
+                sync_queue(job_list, process);
+            }
         }
 
         ///////////////////////MANAGE WAIT QUEUE/////////////////////////
         //This mainly involves keeping track of how long a process must remain in the ready queue
+        //No preemption in EP so we don't really care about this for now.
 
         /////////////////////////////////////////////////////////////////
 

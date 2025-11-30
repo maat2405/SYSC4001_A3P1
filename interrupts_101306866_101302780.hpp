@@ -55,18 +55,17 @@ struct memory_partition{
 };
 
 struct PCB{
-    int             PID;
-    unsigned int    size;
-    unsigned int    arrival_time;
+    int             PID; //INPUT
+    unsigned int    size; //INPUT
+    unsigned int    arrival_time; //INPUT
     int             start_time;
-    unsigned int    processing_time;
+    unsigned int    processing_time; //INPUT
     unsigned int    remaining_time;
     int             partition_number;
     enum states     state;
-    unsigned int    io_freq;
-    unsigned int    io_duration;
-    unsigned int    priority;
-    unsigned int    time_slice_remaining;         
+    unsigned int    io_freq; //INPUT
+    unsigned int    io_duration; //INPUT
+    unsigned int    time_slice_remaining;
 
 };
 
