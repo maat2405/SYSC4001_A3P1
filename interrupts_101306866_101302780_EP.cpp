@@ -30,6 +30,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
     unsigned int current_time = 0;
     const int context_time = 10; // context switch time
     const int isr_time = 50; // ISR time
+    bool cpu_idle = true;
     PCB running;
 
     //Initialize an empty running process
@@ -60,24 +61,31 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
                 ready_queue.push_back(process); //Add the process to the ready queue
                 job_list.push_back(process); //Add it to the list of processes
 
+                process.state = READY;
                 execution_status += print_exec_status(current_time, process.PID, NEW, READY);
+                
+                sync_queue(job_list, process);
             }
 
             if(process.state == READY) {
-                current_time += context_time; //Add context switch time
-                execution_status += print_exec_status(current_time, process.PID, READY, RUNNING);
-                sync_queue(job_list, process);
+                if (cpu_idle) {                    
+                    run_process(process, job_list, ready_queue, current_time);
+                    execution_status += print_exec_status(current_time, process.PID, READY, RUNNING);
+                    sync_queue(job_list, process);
+                    cpu_idle = false;
+                }
             }
 
             if(process.state == RUNNING) {
-                current_time += process.processing_time; //Add CPU processing time
                 //TODO: CHECK FOR I/O TIMe
-                process.remaining_time = 0;
-                process.state = TERMINATED;
-                free_memory(process);
-                execution_status += print_exec_status(current_time, process.PID, RUNNING, TERMINATED);
-                sync_queue(job_list, process);
+                if (current_time == process.processing_time) {
+                    terminate_process(process, job_list);
+                    cpu_idle = true;
+                    execution_status += print_exec_status(current_time, process.PID, RUNNING, TERMINATED);
+                }
             }
+
+            current_time ++; //Increment the current time
         }
 
         ///////////////////////MANAGE WAIT QUEUE/////////////////////////
