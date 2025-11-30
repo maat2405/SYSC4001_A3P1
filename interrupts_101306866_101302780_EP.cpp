@@ -61,31 +61,10 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
                 ready_queue.push_back(process); //Add the process to the ready queue
                 job_list.push_back(process); //Add it to the list of processes
 
-                process.state = READY;
                 execution_status += print_exec_status(current_time, process.PID, NEW, READY);
                 
                 sync_queue(job_list, process);
             }
-
-            if(process.state == READY) {
-                if (cpu_idle) {                    
-                    run_process(process, job_list, ready_queue, current_time);
-                    execution_status += print_exec_status(current_time, process.PID, READY, RUNNING);
-                    sync_queue(job_list, process);
-                    cpu_idle = false;
-                }
-            }
-
-            if(process.state == RUNNING) {
-                //TODO: CHECK FOR I/O TIMe
-                if (current_time == process.processing_time) {
-                    terminate_process(process, job_list);
-                    cpu_idle = true;
-                    execution_status += print_exec_status(current_time, process.PID, RUNNING, TERMINATED);
-                }
-            }
-
-            current_time ++; //Increment the current time
         }
 
         ///////////////////////MANAGE WAIT QUEUE/////////////////////////
@@ -96,8 +75,28 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
 
         //////////////////////////SCHEDULER//////////////////////////////
         ExternalPriority(ready_queue); 
-        /////////////////////////////////////////////////////////////////
-
+        
+        // Run the process if the ready queue is not empty and CPU is idle
+        if (cpu_idle && !ready_queue.empty()) {
+            run_process(running, job_list, ready_queue, current_time);
+            execution_status += print_exec_status(current_time, running.PID, READY, RUNNING);
+            cpu_idle = false;
+        }
+        
+        // Decrement remaining time of running process
+        if (!cpu_idle && running.remaining_time > 0) {
+            running.remaining_time--;
+            sync_queue(job_list, running);
+        }
+        
+        current_time++; //Increment the sim time
+        
+        // Check if running process has completed after sim time increment
+        if (!cpu_idle && running.remaining_time == 0) {
+            execution_status += print_exec_status(current_time, running.PID, RUNNING, TERMINATED);
+            terminate_process(running, job_list);
+            cpu_idle = true;
+        }
     }
     
     //Close the output table
