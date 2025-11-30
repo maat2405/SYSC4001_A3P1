@@ -32,6 +32,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
     const int isr_time = 50; // ISR time
     bool cpu_idle = true;
     PCB running;
+    unsigned int time_since_io = 0; // Track time since last I/O
 
     //Initialize an empty running process
     idle_CPU(running);
@@ -67,29 +68,49 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
             }
         }
 
-        ///////////////////////MANAGE WAIT QUEUE/////////////////////////
-        //This mainly involves keeping track of how long a process must remain in the ready queue
-        //No preemption in EP so we don't really care about this for now.
-
-        /////////////////////////////////////////////////////////////////
-
         //////////////////////////SCHEDULER//////////////////////////////
         ExternalPriority(ready_queue); 
         
-        // Run the process if the ready queue is not empty and CPU is idle
+        //Run the process if the ready queue is not empty and CPU is idle
         if (cpu_idle && !ready_queue.empty()) {
             run_process(running, job_list, ready_queue, current_time);
             execution_status += print_exec_status(current_time, running.PID, READY, RUNNING);
             cpu_idle = false;
+            time_since_io = 0; //Reset I/O counter when process starts/resumes
         }
         
-        // Decrement remaining time of running process
+        // Decrementing the remaining time on process execution
         if (!cpu_idle && running.remaining_time > 0) {
             running.remaining_time--;
+            time_since_io++;
             sync_queue(job_list, running);
         }
         
+        // Decrementing I/O duration for processes already in wait queue
+        for(auto &waiting : wait_queue) {
+            waiting.io_duration--;
+            sync_queue(job_list, waiting);
+        }
+        
         current_time++; //Increment the sim time
+        
+        // Check if process needs I/O after time increment
+        if (!cpu_idle && running.io_freq != 0 && time_since_io == running.io_freq && running.remaining_time > 0) {
+            // Save original io_duration from PCB in process list
+            for(auto &p : list_processes) {
+                if(p.PID == running.PID) {
+                    running.io_duration = p.io_duration;
+                    break;
+                }
+            }
+            
+            execution_status += print_exec_status(current_time, running.PID, RUNNING, WAITING);
+            running.state = WAITING;
+            sync_queue(job_list, running);
+            wait_queue.push_back(running);  // Add AFTER decrementing existing ones
+            cpu_idle = true;
+            idle_CPU(running);
+        }
         
         // Check if running process has completed after sim time increment
         if (!cpu_idle && running.remaining_time == 0) {
@@ -97,6 +118,21 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
             terminate_process(running, job_list);
             cpu_idle = true;
         }
+        
+        ///////////////////////MANAGE WAIT QUEUE/////////////////////////
+        // Check if any processes in wait queue have completed I/O
+        for(auto it = wait_queue.begin(); it != wait_queue.end(); ) {
+            if(it->io_duration == 0) {
+                it->state = READY;
+                execution_status += print_exec_status(current_time, it->PID, WAITING, READY);
+                ready_queue.push_back(*it);
+                sync_queue(job_list, *it);
+                it = wait_queue.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        /////////////////////////////////////////////////////////////////
     }
     
     //Close the output table
