@@ -9,12 +9,12 @@
 
 #include "interrupts_101306866_101302780.hpp"
 
-void ExternalPriorityRR(std::vector<PCB> &ready_queue) {
+void ExternalPriority(std::vector<PCB> &ready_queue) {
     std::sort(
         ready_queue.begin(),
         ready_queue.end(),
         [](const PCB &a, const PCB &b){
-            return a.priority < b.priority;
+            return a.PID > b.PID; //lower number = higher priority but put at back for pop_back
         }
     );
 }
@@ -31,7 +31,11 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
                                     //to make the code easier :).
 
     unsigned int current_time = 0;
+    const int timeout = 100; //Time slice for Round Robin
+    bool cpu_idle = true;
     PCB running;
+    unsigned int time_since_io = 0; //Track time since last I/O
+    unsigned int time_slice_remaining = timeout; //Track remaining time slice
 
     //Initialize an empty running process
     idle_CPU(running);
@@ -52,6 +56,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
 
         //Population of ready queue is given to you as an example.
         //Go through the list of proceeses
+        bool new_arrival = false;
         for(auto &process : list_processes) {
             if(process.arrival_time == current_time) {//check if the AT = current time
                 //if so, assign memory and put the process into the ready queue
@@ -62,18 +67,117 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
                 job_list.push_back(process); //Add it to the list of processes
 
                 execution_status += print_exec_status(current_time, process.PID, NEW, READY);
+                
+                sync_queue(job_list, process);
+                new_arrival = true;
             }
         }
 
-        ///////////////////////MANAGE WAIT QUEUE/////////////////////////
-        //This mainly involves keeping track of how long a process must remain in the ready queue
-
-        /////////////////////////////////////////////////////////////////
-
         //////////////////////////SCHEDULER//////////////////////////////
-        ExternalPriorityRR(ready_queue); //example of FCFS is shown here
-        /////////////////////////////////////////////////////////////////
+        ExternalPriority(ready_queue);
+        
+        //Check if a higher priority process just arrived or returned from I/O (priority preemption)
+        //Only preempt if there was a change to the ready queue
+        if (new_arrival && !cpu_idle && !ready_queue.empty() && ready_queue.back().PID < running.PID) {
+            //Higher priority process available, preempt current process
+            execution_status += print_exec_status(current_time, running.PID, RUNNING, READY);
+            running.state = READY;
+            ready_queue.push_back(running);
+            sync_queue(job_list, running);
+            cpu_idle = true;
+            idle_CPU(running);
+            ExternalPriority(ready_queue); //Re-sort after adding preempted process
+        }
+        
+        //Run the process if the ready queue is not empty and CPU is idle
+        if (cpu_idle && !ready_queue.empty()) {
+            run_process(running, job_list, ready_queue, current_time);
+            execution_status += print_exec_status(current_time, running.PID, READY, RUNNING);
+            cpu_idle = false;
+            time_since_io = 0; //Reset I/O counter when process starts/resumes
+            time_slice_remaining = timeout; //Reset time slice for new/resumed process
+        }
+        
+        //Decrementing the remaining time on process execution
+        if (!cpu_idle && running.remaining_time > 0) {
+            running.remaining_time--;
+            time_since_io++;
+            time_slice_remaining--;
+            sync_queue(job_list, running);
+        }
+        
+        //Decrementing I/O duration for processes already in wait queue
+        for(auto &waiting : wait_queue) {
+            waiting.io_duration--;
+            sync_queue(job_list, waiting);
+        }
+        
+        current_time++; //Increment the sim time
+        
+        //Check if process needs I/O after time increment
+        if (!cpu_idle && running.io_freq != 0 && time_since_io == running.io_freq && running.remaining_time > 0) {
+            //Save original io_duration from PCB in process list
+            for(auto &p : list_processes) {
+                if(p.PID == running.PID) {
+                    running.io_duration = p.io_duration;
+                    break;
+                }
+            }
+            
+            execution_status += print_exec_status(current_time, running.PID, RUNNING, WAITING);
+            running.state = WAITING;
+            sync_queue(job_list, running);
+            wait_queue.push_back(running);  //Add AFTER decrementing existing ones
+            cpu_idle = true;
+            idle_CPU(running);
+        }
+        
+        //Check if time slice has expired (preemption for Round Robin)
+        if (!cpu_idle && time_slice_remaining == 0 && running.remaining_time > 0) {
+            execution_status += print_exec_status(current_time, running.PID, RUNNING, READY);
+            running.state = READY;
+            ready_queue.push_back(running); //Add to back of ready queue
+            sync_queue(job_list, running);
+            cpu_idle = true;
+            idle_CPU(running);
+        }
+        
+        //Check if running process has completed after sim time increment
+        if (!cpu_idle && running.remaining_time == 0) {
+            execution_status += print_exec_status(current_time, running.PID, RUNNING, TERMINATED);
+            terminate_process(running, job_list);
+            cpu_idle = true;
+        }
+        
+        ///////////////////////MANAGE WAIT QUEUE/////////////////////////
+        //Check if any processes in wait queue have completed I/O
+        bool io_completed = false;
+        for(auto it = wait_queue.begin(); it != wait_queue.end(); ) {
+            if(it->io_duration == 0) {
+                it->state = READY;
+                execution_status += print_exec_status(current_time, it->PID, WAITING, READY);
+                ready_queue.push_back(*it);
+                sync_queue(job_list, *it);
+                it = wait_queue.erase(it);
+                io_completed = true;
+                
+                // Check for priority preemption when process returns from I/O
+                ExternalPriority(ready_queue);
 
+                if (!cpu_idle && !ready_queue.empty() && ready_queue.back().PID < running.PID) {
+                    execution_status += print_exec_status(current_time, running.PID, RUNNING, READY);
+                    running.state = READY;
+                    ready_queue.push_back(running);
+                    sync_queue(job_list, running);
+                    cpu_idle = true;
+                    idle_CPU(running);
+                    ExternalPriority(ready_queue);
+                }
+            } else {
+                ++it;
+            }
+        }
+        /////////////////////////////////////////////////////////////////
     }
     
     //Close the output table

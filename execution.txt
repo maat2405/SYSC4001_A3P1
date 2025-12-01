@@ -4,17 +4,19 @@
 |                 0 | 10 |       NEW |     READY |
 |                 0 | 10 |     READY |   RUNNING |
 |                 3 |  1 |       NEW |     READY |
-|               100 | 10 |   RUNNING |     READY |
-|               100 | 10 |     READY |   RUNNING |
-|               200 | 10 |   RUNNING |TERMINATED |
-|               200 |  1 |     READY |   RUNNING |
-|               300 |  1 |   RUNNING |     READY |
-|               300 |  1 |     READY |   RUNNING |
-|               400 |  1 |   RUNNING |     READY |
-|               400 |  1 |     READY |   RUNNING |
-|               500 |  1 |   RUNNING |     READY |
-|               500 |  1 |     READY |   RUNNING |
-|               600 |  1 |   RUNNING |     READY |
-|               600 |  1 |     READY |   RUNNING |
-|               700 |  1 |   RUNNING |TERMINATED |
+|                 3 | 10 |   RUNNING |     READY |
+|                 3 |  1 |     READY |   RUNNING |
+|               103 |  1 |   RUNNING |     READY |
+|               103 |  1 |     READY |   RUNNING |
+|               203 |  1 |   RUNNING |     READY |
+|               203 |  1 |     READY |   RUNNING |
+|               303 |  1 |   RUNNING |     READY |
+|               303 |  1 |     READY |   RUNNING |
+|               403 |  1 |   RUNNING |     READY |
+|               403 |  1 |     READY |   RUNNING |
+|               503 |  1 |   RUNNING |TERMINATED |
+|               503 | 10 |     READY |   RUNNING |
+|               603 | 10 |   RUNNING |     READY |
+|               603 | 10 |     READY |   RUNNING |
+|               700 | 10 |   RUNNING |TERMINATED |
 +------------------------------------------------+
