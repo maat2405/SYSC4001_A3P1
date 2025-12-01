@@ -1,0 +1,52 @@
++------------------------------------------------+
+|Time of Transition |PID | Old State | New State |
++------------------------------------------------+
+|                 0 |  1 |       NEW |     READY |
+|                 0 |  1 |     READY |   RUNNING |
+|                20 |  2 |       NEW |     READY |
+|                40 |  3 |       NEW |     READY |
+|                60 |  4 |       NEW |     READY |
+|               100 |  1 |   RUNNING |     READY |
+|               100 |  1 |     READY |   RUNNING |
+|               200 |  1 |   RUNNING |     READY |
+|               200 |  1 |     READY |   RUNNING |
+|               300 |  1 |   RUNNING |     READY |
+|               300 |  1 |     READY |   RUNNING |
+|               400 |  1 |   RUNNING |     READY |
+|               400 |  1 |     READY |   RUNNING |
+|               500 |  1 |   RUNNING |TERMINATED |
+|               500 |  4 |     READY |   RUNNING |
+|               600 |  4 |   RUNNING |     READY |
+|               600 |  4 |     READY |   RUNNING |
+|               700 |  4 |   RUNNING |     READY |
+|               700 |  4 |     READY |   RUNNING |
+|               800 |  4 |   RUNNING |     READY |
+|               800 |  4 |     READY |   RUNNING |
+|               900 |  4 |   RUNNING |     READY |
+|               900 |  4 |     READY |   RUNNING |
+|               950 |  4 |   RUNNING |TERMINATED |
+|               950 |  3 |     READY |   RUNNING |
+|              1050 |  3 |   RUNNING |     READY |
+|              1050 |  3 |     READY |   RUNNING |
+|              1150 |  3 |   RUNNING |     READY |
+|              1150 |  3 |     READY |   RUNNING |
+|              1250 |  3 |   RUNNING |     READY |
+|              1250 |  3 |     READY |   RUNNING |
+|              1350 |  3 |   RUNNING |     READY |
+|              1350 |  3 |     READY |   RUNNING |
+|              1450 |  3 |   RUNNING |     READY |
+|              1450 |  3 |     READY |   RUNNING |
+|              1550 |  3 |   RUNNING |TERMINATED |
+|              1550 |  2 |     READY |   RUNNING |
+|              1650 |  2 |   RUNNING |     READY |
+|              1650 |  2 |     READY |   RUNNING |
+|              1750 |  2 |   RUNNING |     READY |
+|              1750 |  2 |     READY |   RUNNING |
+|              1850 |  2 |   RUNNING |     READY |
+|              1850 |  2 |     READY |   RUNNING |
+|              1950 |  2 |   RUNNING |     READY |
+|              1950 |  2 |     READY |   RUNNING |
+|              2050 |  2 |   RUNNING |     READY |
+|              2050 |  2 |     READY |   RUNNING |
+|              2100 |  2 |   RUNNING |TERMINATED |
++------------------------------------------------+

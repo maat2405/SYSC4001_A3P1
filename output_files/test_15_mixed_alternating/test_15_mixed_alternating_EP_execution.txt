@@ -1,0 +1,70 @@
++------------------------------------------------+
+|Time of Transition |PID | Old State | New State |
++------------------------------------------------+
+|                 0 |  1 |       NEW |     READY |
+|                 0 |  1 |     READY |   RUNNING |
+|                 5 |  2 |       NEW |     READY |
+|                10 |  3 |       NEW |     READY |
+|                15 |  4 |       NEW |     READY |
+|               500 |  1 |   RUNNING |TERMINATED |
+|               500 |  4 |     READY |   RUNNING |
+|               518 |  4 |   RUNNING |   WAITING |
+|               518 |  3 |     READY |   RUNNING |
+|               563 |  4 |   WAITING |     READY |
+|              1118 |  3 |   RUNNING |TERMINATED |
+|              1118 |  4 |     READY |   RUNNING |
+|              1136 |  4 |   RUNNING |   WAITING |
+|              1136 |  2 |     READY |   RUNNING |
+|              1156 |  2 |   RUNNING |   WAITING |
+|              1181 |  4 |   WAITING |     READY |
+|              1181 |  4 |     READY |   RUNNING |
+|              1199 |  4 |   RUNNING |   WAITING |
+|              1206 |  2 |   WAITING |     READY |
+|              1206 |  2 |     READY |   RUNNING |
+|              1226 |  2 |   RUNNING |   WAITING |
+|              1244 |  4 |   WAITING |     READY |
+|              1244 |  4 |     READY |   RUNNING |
+|              1262 |  4 |   RUNNING |   WAITING |
+|              1276 |  2 |   WAITING |     READY |
+|              1276 |  2 |     READY |   RUNNING |
+|              1296 |  2 |   RUNNING |   WAITING |
+|              1307 |  4 |   WAITING |     READY |
+|              1307 |  4 |     READY |   RUNNING |
+|              1325 |  4 |   RUNNING |   WAITING |
+|              1346 |  2 |   WAITING |     READY |
+|              1346 |  2 |     READY |   RUNNING |
+|              1366 |  2 |   RUNNING |   WAITING |
+|              1370 |  4 |   WAITING |     READY |
+|              1370 |  4 |     READY |   RUNNING |
+|              1388 |  4 |   RUNNING |   WAITING |
+|              1416 |  2 |   WAITING |     READY |
+|              1416 |  2 |     READY |   RUNNING |
+|              1433 |  4 |   WAITING |     READY |
+|              1436 |  2 |   RUNNING |   WAITING |
+|              1436 |  4 |     READY |   RUNNING |
+|              1454 |  4 |   RUNNING |   WAITING |
+|              1486 |  2 |   WAITING |     READY |
+|              1486 |  2 |     READY |   RUNNING |
+|              1499 |  4 |   WAITING |     READY |
+|              1506 |  2 |   RUNNING |   WAITING |
+|              1506 |  4 |     READY |   RUNNING |
+|              1524 |  4 |   RUNNING |   WAITING |
+|              1556 |  2 |   WAITING |     READY |
+|              1556 |  2 |     READY |   RUNNING |
+|              1569 |  4 |   WAITING |     READY |
+|              1576 |  2 |   RUNNING |   WAITING |
+|              1576 |  4 |     READY |   RUNNING |
+|              1594 |  4 |   RUNNING |   WAITING |
+|              1626 |  2 |   WAITING |     READY |
+|              1626 |  2 |     READY |   RUNNING |
+|              1639 |  4 |   WAITING |     READY |
+|              1646 |  2 |   RUNNING |   WAITING |
+|              1646 |  4 |     READY |   RUNNING |
+|              1664 |  4 |   RUNNING |TERMINATED |
+|              1696 |  2 |   WAITING |     READY |
+|              1696 |  2 |     READY |   RUNNING |
+|              1716 |  2 |   RUNNING |   WAITING |
+|              1766 |  2 |   WAITING |     READY |
+|              1766 |  2 |     READY |   RUNNING |
+|              1786 |  2 |   RUNNING |TERMINATED |
++------------------------------------------------+
