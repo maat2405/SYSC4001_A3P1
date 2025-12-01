@@ -113,7 +113,7 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
         if (!cpu_idle && time_slice_remaining == 0 && running.remaining_time > 0) {
             execution_status += print_exec_status(current_time, running.PID, RUNNING, READY);
             running.state = READY;
-            ready_queue.insert(ready_queue.begin(), running); //Add to front of ready queue
+            ready_queue.push_back(running); //Add to back of ready queue
             sync_queue(job_list, running);
             cpu_idle = true;
             idle_CPU(running);
